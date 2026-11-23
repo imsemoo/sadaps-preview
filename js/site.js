@@ -70,7 +70,10 @@ const leads = [...document.querySelectorAll('.lead')];
 if (leads.length) {
 const railItems = [...document.querySelectorAll('.rail-item')];
 const view = document.querySelector('.stage-view');
+let leadIndex = 0;
 function showLead(index) {
+  if (index === leadIndex && leads[index].classList.contains('is-on')) return;
+  leadIndex = index;
   leads.forEach((lead, i) => lead.classList.toggle('is-on', i === index));
   railItems.forEach((item, i) => {
     item.classList.toggle('is-on', i === index);
@@ -81,7 +84,9 @@ let hoverTimer;
 railItems.forEach((item, index) => {
   item.addEventListener('click', () => {
     if (phone.matches) {
-      leads[index].scrollIntoView({ behavior: calm.matches ? 'auto' : 'smooth', inline: 'start', block: 'nearest' });
+      // scroll the row itself; scrollIntoView would also shift the whole page sideways in RTL
+      const delta = leads[index].getBoundingClientRect().right - (view.getBoundingClientRect().right - 16);
+      view.scrollBy({ left: delta, behavior: calm.matches ? 'auto' : 'smooth' });
     } else {
       showLead(index);
     }
