@@ -4,7 +4,7 @@ const input = document.getElementById('find-q');
 const list = document.getElementById('find-list');
 const empty = document.getElementById('find-empty');
 const count = document.getElementById('find-count');
-const chips = [...document.querySelectorAll('.p-search .chip')];
+const chips = [...document.querySelectorAll('.page-search .chip')];
 let region = 'all';
 
 // Arabic letters that readers type interchangeably, folded so "اقصى" finds "الأقصى"
@@ -73,10 +73,10 @@ function render() {
     ? pool.filter((s) => { const hay = fold(s.t + ' ' + (s.x || '') + ' ' + s.rn); return words.every((w) => hay.includes(w)); })
     : [];
   list.innerHTML = found.map((s) => `
-    <li style="--c:${esc(s.c)}">
+    <li data-region="${esc(s.r)}">
       <a href="${esc(s.u)}">
         <figure><img src="${esc(s.i)}" alt="${esc(s.a)}" loading="lazy"></figure>
-        <div><span class="tag">${esc(s.rn)}</span><h2>${mark(s.t, words)}</h2>${s.x ? `<p>${mark(s.x, words)}</p>` : ''}<time datetime="${esc(s.d)}">${esc(s.w)}</time></div>
+        <div><span class="region-tag">${esc(s.rn)}</span><h2>${mark(s.t, words)}</h2>${s.x ? `<p>${mark(s.x, words)}</p>` : ''}<time datetime="${esc(s.d)}">${esc(s.w)}</time></div>
       </a>
     </li>`).join('');
   empty.hidden = !words.length || found.length > 0;
