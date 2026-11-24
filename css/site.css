@@ -120,7 +120,7 @@ h2 a:hover, h3 a:hover { background-size: 100% 2px; }
 .regions a:hover::before { transform: rotate(45deg); }
 .tools { display: flex; align-items: center; gap: 18px; font-size: .8125rem; }
 .today { color: var(--on-deep-2); white-space: nowrap; }
-.lang { text-decoration: none; font-weight: 500; }
+.lang { text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; min-height: 32px; padding-inline: 4px; }
 .lang:hover { text-decoration: underline; }
 .icon-btn { width: 44px; height: 44px; display: grid; place-items: center; background: none; border: 1.5px solid rgb(242 246 246 / .35); border-start-start-radius: 12px; cursor: pointer; transition: background var(--t-tap), border-color var(--t-tap), transform var(--t-tap); }
 .icon-btn svg { width: 20px; height: 20px; }
@@ -132,7 +132,7 @@ h2 a:hover, h3 a:hover { background-size: 100% 2px; }
 .break-in > * { height: var(--strip); display: flex; align-items: center; }
 .break strong { gap: 10px; font-weight: 800; }
 .break-list { display: grid; min-width: 0; }
-.break-item { grid-area: 1 / 1; align-self: center; font-weight: 500; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0; transform: translateY(10px); pointer-events: none; transition: opacity var(--t-reveal) var(--ease-out), transform var(--t-reveal) var(--ease-out); }
+.break-item { grid-area: 1 / 1; align-self: center; padding-block: 2px; font-weight: 500; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0; transform: translateY(10px); pointer-events: none; transition: opacity var(--t-reveal) var(--ease-out), transform var(--t-reveal) var(--ease-out); }
 .break-item.is-on { opacity: 1; transform: none; pointer-events: auto; }
 .break-item:hover { text-decoration: underline; }
 .break-time { font-family: var(--font-ui); font-size: .8125rem; opacity: .9; white-space: nowrap; }
@@ -722,7 +722,8 @@ h2 a:hover, h3 a:hover { background-size: 100% 2px; }
 #find-list a:hover h2 { text-decoration: underline; text-underline-offset: .3em; }
 #find-list p { font-family: var(--font-body); color: var(--ink-2); line-height: 1.8; max-width: 64ch; }
 #find-list time { font-size: .8125rem; color: var(--muted); }
-mark { background: #CDEFF4; color: inherit; padding-inline: 2px; }
+/* no padding: it would split the cursive join when a match ends mid-word */
+mark { background: #CDEFF4; color: inherit; }
 .find-empty { display: grid; justify-items: start; gap: 12px; padding-block: 56px; max-width: 520px; }
 .find-empty[hidden] { display: none; }
 .find-empty .echo-mark { width: 64px; }

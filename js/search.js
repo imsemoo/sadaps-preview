@@ -9,11 +9,20 @@ let region = 'all';
 
 // Arabic letters that readers type interchangeably, folded so "اقصى" finds "الأقصى"
 const fold = (text) => text
-  .replace(/[ً-ْـ]/g, '')
-  .replace(/[أإآ]/g, 'ا')
+  .replace(/[ً-ٰٕـ]/g, '')
+  .replace(/[أإآٱ]/g, 'ا')
   .replace(/ى/g, 'ي')
   .replace(/ة/g, 'ه')
   .toLowerCase();
+
+const MARKS = /[ً-ٰٕ]/;
+
+// Arabic number agreement: خبر واحد، خبران، 3 أخبار، 11 خبراً
+const counted = (n, one, two, few, many) => {
+  if (n === 1) return one;
+  if (n === 2) return two;
+  return n <= 10 ? `${n} ${few}` : `${n} ${many}`;
+};
 
 const esc = (text) => text.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
@@ -36,7 +45,13 @@ function mark(text, words) {
   const hits = [];
   words.forEach((w) => {
     let pos = out.indexOf(w);
-    while (pos !== -1) { hits.push([at[pos], at[pos + w.length - 1] + 1]); pos = out.indexOf(w, pos + w.length); }
+    while (pos !== -1) {
+      // carry the diacritics that follow the last letter into the highlight
+      let end = at[pos + w.length - 1] + 1;
+      while (end < chars.length && MARKS.test(chars[end])) end += 1;
+      hits.push([at[pos], end]);
+      pos = out.indexOf(w, pos + w.length);
+    }
   });
   if (!hits.length) return esc(text);
   hits.sort((x, y) => x[0] - y[0]);
@@ -58,15 +73,17 @@ function render() {
     ? pool.filter((s) => { const hay = fold(s.t + ' ' + (s.x || '') + ' ' + s.rn); return words.every((w) => hay.includes(w)); })
     : [];
   list.innerHTML = found.map((s) => `
-    <li style="--c:${s.c}">
-      <a href="${s.u}">
-        <figure><img src="${s.i}" alt="${esc(s.a)}" loading="lazy"></figure>
-        <div><span class="tag">${esc(s.rn)}</span><h2>${mark(s.t, words)}</h2>${s.x ? `<p>${mark(s.x, words)}</p>` : ''}<time datetime="${s.d}">${s.w}</time></div>
+    <li style="--c:${esc(s.c)}">
+      <a href="${esc(s.u)}">
+        <figure><img src="${esc(s.i)}" alt="${esc(s.a)}" loading="lazy"></figure>
+        <div><span class="tag">${esc(s.rn)}</span><h2>${mark(s.t, words)}</h2>${s.x ? `<p>${mark(s.x, words)}</p>` : ''}<time datetime="${esc(s.d)}">${esc(s.w)}</time></div>
       </a>
     </li>`).join('');
   empty.hidden = !words.length || found.length > 0;
-  if (!words.length) count.textContent = `اكتب كلمة للبحث في ${pool.length} خبراً.`;
-  else count.textContent = found.length ? `${found.length} نتيجة عن «${q}»` : `لا نتائج عن «${q}»`;
+  if (!words.length) count.textContent = `اكتب كلمة للبحث في ${counted(pool.length, 'خبر واحد', 'خبرين', 'أخبار', 'خبراً')}.`;
+  else count.textContent = found.length
+    ? `${counted(found.length, 'نتيجة واحدة', 'نتيجتان', 'نتائج', 'نتيجة')} عن «${q}»`
+    : `لا نتائج عن «${q}»`;
   document.title = q ? `${q} | البحث في صدى فلسطين` : 'البحث | صدى فلسطين';
 }
 
