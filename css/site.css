@@ -2303,8 +2303,17 @@ h3 a:hover {
   align-items: stretch;
 }
 
+/* 16/9 only where the series stands alone (<=999px). Beside the tiles the grid stretches it to
+   their height, and a ratio then widened it past its column (515px tall -> 916px wide in a
+   754px column), so it ran under the tiles. */
 .video-series {
-  aspect-ratio: 16 / 9;
+  min-width: 0;
+}
+
+@media (max-width: 999px) {
+  .video-series {
+    aspect-ratio: 16 / 9;
+  }
 }
 
 .video-series .story-media {
